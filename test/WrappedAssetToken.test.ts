@@ -47,10 +47,15 @@ describe("WrappedAssetToken", function () {
 
   it('when requestUnwrap is called, should emit UnwrapRequested event with the right info', async () => {
     await wrappedToken.connect(signer.admin).mint(signers[1].address, 1000);
+    expect(await wrappedToken.balanceOf(signers[1].address)).to.equal(1000);
+    expect(await wrappedToken.totalSupply()).to.equal(1000);
 
     await expect(wrappedToken.connect(signers[1]).requestUnwrap(1000))
       .to.emit(wrappedToken, 'UnwrapRequested')
       .withArgs(signers[1].address, 1000);
+
+    expect(await wrappedToken.balanceOf(signers[1].address)).to.equal(0);
+    expect(await wrappedToken.totalSupply()).to.equal(0);
   });
 
   it('should not allow a User to call requestUnwrap with an amount greater than their wrapped balance', async () => {
